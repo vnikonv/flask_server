@@ -1,0 +1,20 @@
+{%extends "base.html"%}
+{% block head %}
+<title>Uploads</title>
+{% endblock head %}
+{% block body %}
+<form method="POST" action="/uploads/upload" enctype="multipart/form-data">
+    <!-- This enctype is for sending multiple binary files with different content type headers -->
+    <label for="selected">Select files:</label>
+    <input type="file" name="selected" multiple="multiple">
+    <label for="selected">Upload the files:</label>
+    <input type="submit">
+</form>
+{% if all_files %}
+    <ul>
+    {% for file in all_files %}
+        <li>{{ file }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endblock body %}
