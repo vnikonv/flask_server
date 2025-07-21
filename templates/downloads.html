@@ -1,0 +1,12 @@
+{%extends "base.html"%}
+{% block head %}
+<title>Downloads</title>
+{% endblock head %}
+{% block body %}
+{% for file in files %}
+    <a href="/downloads/{{ file }}">{{ file }}</a>
+    <br>
+{% endfor %}
+<a href="/">Home</a>
+<a href="/uploads">Uploads</a>
+{% endblock body %}

@@ -1,13 +1,18 @@
 {%extends "base.html"%}
 {% block head %}
-<title>Uploads Page</title>
+<title>Home</title>
 {% endblock head %}
 {% block body %}
-<h1>Uploads Page</h1>
+<h1>Home</h1>
     <form method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="file" name="file">
-      <input type="submit" value="Upload">
+      <!-- This enctype is for sending multiple binary files with different content type headers -->
+      <label for="selected">Select files:</label>
+      <input type="file" name="selected" multiple="multiple">
+      <label for="selected">Upload the files:</label>
+      <input type="submit">
     </form>
 <br>
-<a href="/download">Downloads Page</a>
+
+<a href="/uploads">Uploads</a>
+<a href="/downloads">Downloads</a>
 {% endblock body %}
