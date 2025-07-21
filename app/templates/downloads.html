@@ -5,6 +5,14 @@
 {% block body %}
 {% for file in files %}
     <a href="/downloads/{{ file }}">{{ file }}</a>
+    <form method="POST" style="display:inline;">
+        {% if not confirm %}
+            <input type="hidden" name="confirm" value="1">
+            <button type="submit">Delete</button>
+        {% else %}
+            <button type="submit" formaction="/downloads/delete/{{ file }}">Confirm Delete</button>
+        {% endif %}
+    </form>
     <br>
 {% endfor %}
 {% endblock body %}

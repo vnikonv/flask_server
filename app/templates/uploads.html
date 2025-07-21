@@ -10,11 +10,20 @@
     <label for="selected">Upload the files:</label>
     <input type="submit">
 </form>
-{% if all_files %}
+<!-- Logic for displaying uploads history -->
+{% if up_files %}
     <ul>
-    {% for file in all_files %}
+    {% for file in up_files %}
         <li>{{ file }}</li>
     {% endfor %}
     </ul>
 {% endif %}
+<form method="post">
+    {% if not confirm %}
+        <input type="hidden" name="confirm" value="1">
+        <button type="submit">Clear Uploads</button>
+    {% else %}
+        <button type="submit" formaction="uploads/clear">Confirm Clear</button>
+    {% endif %}
+</form>
 {% endblock body %}
