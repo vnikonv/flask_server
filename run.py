@@ -1,7 +1,9 @@
 """
 # Flask application to upload and download files by client devices of a local access network.
 # No JavaScript is used.
-# It is possible to upload and download multiple folders or files at once.
+# It is possible to upload and download multiple files at once.
+# When folders are uploaded with either webkit or archive mode, file structure is preserved.
+# When archives are uploaded in the archive upload mode, the files are extracted on the server.
 # To run the server locally, install the requirements and run this file.
 """
 from app import create_app

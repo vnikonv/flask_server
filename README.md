@@ -1,5 +1,5 @@
 ![](app/static/favicon.ico)
 ## A home-use Flask server for file transfer between multiple devices.
-### Install the [dependencies](requirements.txt) and execute the [main file](run.py).
-### Short Todo: Draw own icon. Sorting of upload history. Implement multiple file/folder downloads/uploads/deletes. Implement cache control.
-### Long Todo: Enable encryption of session cookies. Connect the Flask app to an Apache server for production use. Protect the server from abuse.
+### Install the [dependencies](requirements.txt) and execute the [entry point](run.py).
+### Short Todo: Implement archive upload mode. Implement multiple file and folder downloads/deletes. Implement cache control. Enable encryption of session cookies. Draw own icon.
+### Long Todo: Make home page entertaining. Connect the Flask app to an Nginx server for production use with Gunicorn. Configure Nginx.
