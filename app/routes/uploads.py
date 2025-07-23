@@ -6,14 +6,12 @@ from datetime import datetime
 
 uploads_bp = Blueprint('uploads', __name__)
 
-@uploads_bp.route('/uploads', methods=['GET', 'POST']) # When the /uploads route is accessed, it will call the uploads function
-@uploads_bp.route('/uploads?', methods=['GET', 'POST'])
+@uploads_bp.route('/uploads', methods=['GET']) # When the /uploads route is accessed, it will call the uploads function
+@uploads_bp.route('/uploads?', methods=['GET'])
 def uploads():
-    confirm = False # Variable to determine if the user has confirmed to clear the uploads history
-    if request.method == 'POST' and request.form.get('confirm') == '1':
-        confirm = True
     mode = request.args.get('mode', '0')
     up_files = session.get('up_files', []) # Retrieves the list of uploaded files from the session, else defaults up_files to an empty array
+    confirm = request.args.get('confirm', '0')
     return render_template('uploads.html', mode=mode, up_files=up_files, confirm=confirm) # The html file that lists uploaded files
 
 
@@ -37,7 +35,8 @@ def upload():
         flash(f'Files uploaded successfully at {up_time}.', 'success')
         return redirect('/uploads') # Redirects to the uploads page after saving files
 
-@uploads_bp.route('/uploads/clear', methods=['POST']) # When the /uploads/clear route is accessed with a POST request, it will call the clear_uploads function
+
+@uploads_bp.route('/uploads/clear', methods=['POST']) # When the /uploads/clear route is accessed with a POST request (HTML does not natively support DELETE), it will call the clear_uploads function
 def clear_uploads():
     """
     Clears the history of uploaded files from the session.
@@ -45,3 +44,4 @@ def clear_uploads():
     session['up_files'] = []  # Clears the list of uploaded files in the session
     flash('The uploads history is clear.', 'success')  # Flash message to indicate that the uploads history has been cleared
     return redirect('/uploads')  # Redirects to the uploads page after clearing the list
+

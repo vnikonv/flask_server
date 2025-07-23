@@ -2,7 +2,7 @@ import socket
 
 def get_ip() -> str:
     """
-    # This function retrieves the local IP address of the machine to be used by the Flask server.
+    # This function retrieves the local IP address of the machine to be used by the Flask development server.
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Creates a UDP socket (connectionless, no handshake)
     try:

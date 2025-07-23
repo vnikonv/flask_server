@@ -1,18 +1,40 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 {% block head %}
 <title>Downloads</title>
 {% endblock head %}
 {% block body %}
-{% for file in files %}
-    <a href="/downloads/{{ file }}">{{ file }}</a>
-    <form method="POST" style="display:inline;">
-        {% if not confirm %}
-            <input type="hidden" name="confirm" value="1">
-            <button type="submit">Delete</button>
-        {% else %}
-            <button type="submit" formaction="/downloads/delete/{{ file }}">Confirm Delete</button>
-        {% endif %}
-    </form>
-    <br>
-{% endfor %}
+<h1>Downloads</h1>
+{% if subpath %}
+    <!-- The split method returns a list containing directory names in current path except for the current directory. -->
+    <!-- The directories in that list are then joined with '/' as the separator. -->
+    <h3>Current Path: {{ subpath }}</h3>
+    <a href="/downloads/tree/{{ '/'.join(subpath.split('/')[:-1]) }}">Back</a><br>
+{% endif %}
+<ul>
+    {% for item in items %}
+        {% set item_path = subpath + '/' + item if subpath else item %}
+        <li>
+            {% if isdir(join(STORAGE, item_path)) %}
+                <!-- Folder -->
+                <a href="/downloads/tree/{{ item_path }}">{{ item }}</a>
+                <form method="GET" action="/downloads/download/{{ item_path }}">
+                    <button type="submit">Download Folder</button>
+                </form>
+            {% else %}
+                <!-- File -->
+                <a href="/downloads/download/{{ item_path }}">{{ item }}</a>
+            {% endif %}
+                {% if confirm == '0' %}
+                <form>
+                    <input type="hidden" name="confirm" value="1">
+                    <button type="submit">Delete</button>
+                </form>
+                {% else %}
+                <form method="POST" action="/downloads/delete/{{ item_path }}">
+                    <button type="submit">Confirm Delete</button>
+                </form>
+                {% endif %}
+        </li>
+    {% endfor %}
+</ul>
 {% endblock body %}

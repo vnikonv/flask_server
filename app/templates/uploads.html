@@ -3,6 +3,7 @@
 <title>Uploads</title>
 {% endblock head %}
 {% block body %}
+<h1>Uploads</h1>
 <form method="POST" action="/uploads/upload" enctype="multipart/form-data">
     <!-- This enctype is for sending multiple binary files with different content type headers -->
     {% if mode == '0' %}
@@ -31,19 +32,23 @@
     {% endif %}
 </form>
 <!-- Logic for displaying uploads history -->
+{% if confirm == '0' %}
+    <form>
+        <input type="hidden" name="confirm" value="1">
+        <button type="submit">Clear Uploads</button>
+    </form>
+{% else %}
+    <form method="POST" action="/uploads/clear">
+        <button type="submit">Confirm Clear</button>
+    </form>
+{% endif %}
+</form>
 {% if up_files %}
+    <h2>Uploads History</h2>
     <ul>
     {% for file in up_files %}
         <li>{{ file }}</li>
     {% endfor %}
     </ul>
 {% endif %}
-<form method="POST">
-    {% if not confirm %}
-        <input type="hidden" name="confirm" value="1">
-        <button type="submit">Clear Uploads</button>
-    {% else %}
-        <button type="submit" formaction="uploads/clear">Confirm Clear</button>
-    {% endif %}
-</form>
 {% endblock body %}

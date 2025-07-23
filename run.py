@@ -2,9 +2,9 @@
 # Flask application to upload and download files by client devices of a local access network.
 # No JavaScript is used.
 # It is possible to upload and download multiple files at once.
-# When folders are uploaded with either webkit or archive mode, file structure is preserved.
+# When folders are uploaded with either webkit or archive mode, the file structure is preserved.
 # When archives are uploaded in the archive upload mode, the files are extracted on the server.
-# To run the server locally, install the requirements and run this file.
+# To run the dev server locally, install the requirements and run this file.
 """
 from app import create_app
 from app.modules.fman import env_read, env_write # Functions to read and write environment variables from/to a .env file
@@ -18,4 +18,4 @@ if __name__ == '__main__':
         env_write('.env', 'SECRET', keygen()) # Generates a secret key and writes it to the .env file
     app.secret_key = env_read('.env', 'SECRET') # Reads the secret key from the .env file and sets it for the Flask app
     host_ip = get_ip() # Gets the host IP address
-    app.run(host=host_ip, port=5001, debug=True) # Run the server on the host ip at the designated port
+    app.run(host=host_ip, port=5001, debug=True) # Run the dev server on the host ip at the designated port

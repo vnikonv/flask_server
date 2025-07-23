@@ -1,4 +1,5 @@
-from os.path import exists
+from os import remove, rmdir, listdir
+from os.path import exists, isdir, join
 
 def env_read(path : str, field : str) -> str | None:
     """
@@ -20,3 +21,16 @@ def env_write(path : str, field : str, value : str) -> None:
     """
     with open(path, 'a') as f:
         f.write(f'{field}={value}\n')
+
+
+def rmrf(path : str) -> None:
+    """
+    # This function deletes a file or directory recursively.
+    """
+    if exists(path):
+        if isdir(path):
+            for item in listdir(path):
+                rmrf(join(path, item))  # Recursively remove items in the directory
+            rmdir(path)  # Remove the empty directory
+        else:
+            remove(path)  # Remove the file

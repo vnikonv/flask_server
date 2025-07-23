@@ -1,30 +1,49 @@
 from flask import Blueprint, render_template, request, send_file, flash, redirect
-from os import listdir, remove
-from os.path import join, exists
+from os import listdir, remove, rmdir
+from os.path import join, exists, isdir, relpath, normpath # normpath for OS-independent path normalization
 from app import STORAGE
+from app.modules.fman import rmrf  # Importing the rmrf function to handle recursive file deletion
 
 downloads_bp = Blueprint('downloads', __name__)
 
-@downloads_bp.route('/downloads', methods=['GET', 'POST']) # When the /downloads route is accessed, it will call the list_files function that returns a list of links to files in storage folder
-def list_files():
-    files = listdir(STORAGE)
-    confirm = False # Variable to determine if the user has confirmed to delete a file
-    if request.method == 'POST' and request.form.get('confirm') == '1':
-        confirm = True
-    return render_template('downloads.html', files=files, confirm=confirm) # The html file that lists download links for files in the storage folder
-
-
-@downloads_bp.route('/downloads/<file>') # When the /downloads/<filename> route is accessed, the server will send the selected file to the client
-def send(file): # file is the name of the file to be sent, <> denotes a dynamic part of the route, meaning that <file> can be any filename
-    return send_file(join(STORAGE, file), as_attachment=True)
-
-@downloads_bp.route('/downloads/delete/<filename>', methods=['POST'])
-def delete_file(filename):
+@downloads_bp.route('/downloads/', defaults={'subpath': ''}, methods=['GET'])
+@downloads_bp.route('/downloads/tree/', defaults={'subpath': ''}, methods=['GET'])
+@downloads_bp.route('/downloads/tree/<path:subpath>', methods=['GET']) # Important to include <path:> converter to handle subdirectories, allows slashes
+def list_files(subpath):
     """
-    Deletes a file from the storage.
+    Lists files and directories in the given subpath of the storage folder.
     """
-    fpath = join(STORAGE, filename) # Constructs the full path to the file in the storage directory
-    if exists(fpath):
-        remove(fpath)
-        flash(f'File {filename} deleted successfully.', 'success')
-        return redirect('/downloads')  # Redirects to the downloads page after deleting the file
+    current_path = join(STORAGE, subpath)
+    if not exists(current_path) or not isdir(current_path):
+        flash('Invalid directory path.', 'danger')
+        return redirect('/downloads')
+    items = listdir(current_path) # List all items in the current directory
+    confirm = request.args.get('confirm', '0') # Get confirmation for deletion
+    return render_template('downloads.html', items=items, subpath=subpath, confirm=confirm, STORAGE=STORAGE, join=join, isdir=isdir)
+
+
+@downloads_bp.route('/downloads/download/<path:filepath>', methods=['GET'])
+def send(filepath):
+    """
+    Sends a file or zips and sends a directory.
+    """
+    fpath = join(STORAGE, normpath(filepath))
+    if not exists(fpath):
+        flash('File not found.', 'danger')
+        return redirect('/downloads')
+
+    if isdir(fpath):  # If the path is a directory, zip it before sending
+        return redirect('/downloads')
+    else:      
+        return send_file(fpath, as_attachment=True)
+
+
+@downloads_bp.route('/downloads/delete/<path:filepath>', methods=['POST'])
+def delete_file(filepath):
+    """
+    Deletes a file or directory from the storage.
+    """
+    fpath = join(STORAGE, filepath)
+    rmrf(fpath) # Using the rmrf function to handle file or directory deletion
+    flash(f'File {relpath(filepath)} deleted successfully.', 'success')
+    return redirect(f'/downloads/{"/".join(filepath.split("/")[:-1])}')
