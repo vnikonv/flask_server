@@ -11,10 +11,10 @@
     <input type="file" name="selected" multiple="multiple">
     {% elif mode == '1' %}
     <label for="selected">Select a folder:</label>
-    <input type="file" name="selected" multiple="multiple" webkitdirectory>
+    <input type="file" name="selected" webkitdirectory>
     {% else %}
     <label for="selected">Select an archive:</label>
-    <input type="file" name="selected" multiple="multiple" accept=".zip, .7z, .tar, .gz">
+    <input type="file" name="selected" multiple="multiple" accept=".zip, .7z, .tar, .gz, .rar">
     {% endif %}
     <label for="selected">Upload the files:</label>
     <input type="submit">
@@ -35,7 +35,7 @@
 {% if confirm == '0' %}
     <form>
         <input type="hidden" name="confirm" value="1">
-        <button type="submit">Clear Uploads</button>
+        <button type="submit">Clear History</button>
     </form>
 {% else %}
     <form method="POST" action="/uploads/clear">
@@ -45,10 +45,19 @@
 </form>
 {% if up_files %}
     <h2>Uploads History</h2>
-    <ul>
-    {% for file in up_files %}
-        <li>{{ file }}</li>
+    <table>
+        <tr>
+            <th>Filename</th>
+            <th>Size</th>
+            <th>Upload Time</th>
+        </tr>
+    {% for file, up_size, up_time in zip(up_files, up_sizes, up_times) %}
+        <tr>
+            <td>{{ file }}</td>
+            <td>{{ up_size }}</td>
+            <td>{{ up_time }}</td>
+        </tr>
     {% endfor %}
-    </ul>
+    </table>
 {% endif %}
 {% endblock body %}
