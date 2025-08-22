@@ -47,12 +47,14 @@
     <h2>Uploads History</h2>
     <table>
         <tr>
+            <th>#</th>
             <th>Filename</th>
             <th>Size</th>
             <th>Upload Time</th>
         </tr>
     {% for file, up_size, up_time in zip(up_files, up_sizes, up_times) %}
         <tr>
+            <td>{{ loop.index }}</td>
             <td>{{ file }}</td>
             <td>{{ up_size }}</td>
             <td>{{ up_time }}</td>

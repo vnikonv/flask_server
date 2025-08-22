@@ -4,37 +4,37 @@
 {% endblock head %}
 {% block body %}
 <h1>Downloads</h1>
+<form method="POST" action="/downloads/upload" enctype="multipart/form-data">
+    <!-- This enctype is for sending multiple binary files with different content type headers -->
+    {% if mode == '0' %}
+    <label for="selected">Select files:</label>
+    <input type="file" name="selected" multiple="multiple">
+    {% elif mode == '1' %}
+    <label for="selected">Select a folder:</label>
+    <input type="file" name="selected" webkitdirectory>
+    {% else %}
+    <label for="selected">Select an archive:</label>
+    <input type="file" name="selected" multiple="multiple" accept=".zip, .7z, .tar, .gz, .rar">
+    {% endif %}
+    <label for="selected">Upload the files:</label>
+    <input type="submit">
+</form>
+<form method="GET">
+    {% if mode == '1' %}
+    <input type="hidden" name="mode" value="2">
+    <button type="submit">Switch To Archive Mode</button>
+    {% elif mode == '0' %}
+    <input type="hidden" name="mode" value="1">
+    <button type="submit">Switch To Folder Mode</button>
+    {% else %}
+    <input type="hidden" name="mode" value="0">
+    <button type="submit">Switch To File Mode</button>
+    {% endif %}
+</form>
 {% if subpath %}
     <!-- The split method returns a list containing directory names in current path except for the current directory. -->
     <!-- The directories in that list are then joined with '/' as the separator. -->
     <h3>Current Path: {{ subpath }}</h3>
-    <form method="POST" action="/downloads/upload" enctype="multipart/form-data">
-        <!-- This enctype is for sending multiple binary files with different content type headers -->
-        {% if mode == '0' %}
-        <label for="selected">Select files:</label>
-        <input type="file" name="selected" multiple="multiple">
-        {% elif mode == '1' %}
-        <label for="selected">Select a folder:</label>
-        <input type="file" name="selected" webkitdirectory>
-        {% else %}
-        <label for="selected">Select an archive:</label>
-        <input type="file" name="selected" multiple="multiple" accept=".zip, .7z, .tar, .gz, .rar">
-        {% endif %}
-        <label for="selected">Upload the files:</label>
-        <input type="submit">
-    </form>
-    <form method="GET">
-        {% if mode == '1' %}
-        <input type="hidden" name="mode" value="2">
-        <button type="submit">Switch To Archive Mode</button>
-        {% elif mode == '0' %}
-        <input type="hidden" name="mode" value="1">
-        <button type="submit">Switch To Folder Mode</button>
-        {% else %}
-        <input type="hidden" name="mode" value="0">
-        <button type="submit">Switch To File Mode</button>
-        {% endif %}
-    </form>
     <br>
     <a href="/downloads/tree/">Root</a>
     <br>

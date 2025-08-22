@@ -34,3 +34,22 @@ def rmrf(path : str) -> None:
             rmdir(path)  # Remove the empty directory
         else:
             remove(path)  # Remove the file
+
+
+class arch:
+    """
+    # This class is used to initialize an archive object for file management.
+    # It will be rewritten in the future.
+    """
+    def __init__(self, name: str, format: str = 'zip') -> None:
+        self.name = name
+        self.format = format.lower()
+        if self.format not in ['zip', 'xztar', 'bztar', 'tar', 'gztar']:
+            raise ValueError("Unsupported archive format. Use 'zip', 'xztar', 'bztar', 'tar', 'gztar'.")
+
+    def compress(self, root: str) -> None:
+        """
+        # This method creates an archive of root folder with the specified format.
+        """
+        from shutil import make_archive
+        return make_archive(self.name, self.format, root)

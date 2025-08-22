@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, redirect, request, make_response
 from os.path import join, abspath, dirname
 from os import makedirs
 
@@ -13,7 +13,14 @@ def create_app(secret):
 
     @app.route('/', methods=['GET']) # When the root route is accessed, it will call the index function
     def index():
-        return render_template('index.html') # The homepage is served
+        return render_template('index.html', theme = request.cookies.get('theme', 'light')) # The homepage is served
+
+    @app.route('/theme') # Route for changing the theme cookie
+    def theme():
+        response = make_response(redirect(request.referrer)) # Creates a response object to modify cookies
+        theme = request.cookies.get('theme', 'light') # Gets the theme from the theme cookie, defaults to 'light'
+        response.set_cookie('theme', 'dark' if theme == 'light' else 'light') # Toggles the theme cookie between 'light' and 'dark'
+        return response
 
     @app.after_request # Implements strict no-cache policy
     def add_no_cache_headers(response):

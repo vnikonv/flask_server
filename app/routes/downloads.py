@@ -3,7 +3,7 @@ from os import listdir, remove, rmdir, makedirs
 from os.path import join, exists, isdir, relpath, normpath, dirname, getsize
 # normpath for OS-independent path normalization
 from app import STORAGE
-from app.modules.fman import rmrf 
+from app.modules.fman import rmrf, arch
 # Importing the rmrf function to handle recursive file deletion
 from datetime import datetime
 
@@ -28,7 +28,7 @@ def list_files(subpath):
     confirm = request.args.get('confirm', '0') # Get confirmation for deletion
     mode = request.args.get('mode', '0')
     return render_template('downloads.html', items=items, subpath=subpath, confirm=confirm,
-    STORAGE=STORAGE, join=join, isdir=isdir, mode=mode)
+    STORAGE=STORAGE, join=join, isdir=isdir, mode=mode, theme = request.cookies.get('theme', 'light'))
 
 
 @downloads_bp.route('/downloads/download/<path:filepath>', methods=['GET'])
@@ -37,13 +37,14 @@ def send(filepath):
     Sends a file or zips and sends a directory.
     """
     fpath = join(STORAGE, normpath(filepath))
+    apath = join(STORAGE, 'archive')
     if not exists(fpath):
         flash('File not found.', 'danger')
         return redirect('/downloads')
 
     if isdir(fpath):  # If the path is a directory, zip it before sending
-        return redirect('/downloads')
-    else:      
+        return send_file(arch(apath, 'zip').compress(fpath), as_attachment=True)
+    else:
         return send_file(fpath, as_attachment=True)
 
 

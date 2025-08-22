@@ -8,6 +8,6 @@
 * When folders are uploaded with either webkit/folder or archive mode, the file structure is preserved.
 * When archives are uploaded in the archive upload mode, the files are extracted on the server.
 ### Short Todo:
-Write a class for cookies. Implement archiving files in OOP. Implement archive upload/download modes; multiple file and folder downloads/deletes. Draw own icon (icicle).
+Implement archiving files in OOP. Implement archive upload/download modes; multiple file and folder downloads/deletes. Write a class for simplifying cookie management. Figure out why the file transfer on the local net is so slow. Draw own icon (icicle).
 ### Long Todo:
-Make home page entertaining with arts. Introduce a feature to take a uniform action (upload/download/delete) on all files that follow a specified filename patter. Connect a database to Flask app for an optional account feature that includes a personal, user-specific, storage. Introduce optional Dockerization. Connect the Flask app to a configured Nginx on a VPS for production use.
+Make home page entertaining with arts. Introduce a feature to take a uniform action (upload/download/delete) on all files that follow a specified filename patter. Connect a database to Flask app for an optional account feature that includes a personal, user-specific, storage (+ uploads history will be saved in the account DB). Introduce optional Dockerization. Connect the Flask app to a configured Nginx on a VPS for fun.

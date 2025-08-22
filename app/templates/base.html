@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Using url_for because the 'static' folder is higher than the 'templates' folder -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% if theme == 'dark' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+    {% else %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/light.css') }}">
+    {% endif %}
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     {% block head %}
     {% endblock head %}
@@ -21,9 +25,11 @@
         </ul>
     {% endif %}
 {% endwith %}
-<br>
-<a href="/">Home</a>
-<a href="/uploads">Uploads</a>
-<a href="/downloads">Downloads</a>
+<div>
+    <a href="/">Home</a>
+    <a href="/uploads">Uploads</a>
+    <a href="/downloads">Downloads</a>
+    <a href="/theme">Change Theme</a>
+</div>
 </body>
 </html>

@@ -13,10 +13,11 @@ uploads_bp = Blueprint('uploads', __name__)
 def uploads():
     mode = request.args.get('mode', '0')
     confirm = request.args.get('confirm', '0')
-    up_files = request.cookies.get('up_files', []) # Gets the list of uploaded files from a cookie, else defaults up_files to an empty array
-    up_sizes = request.cookies.get('up_sizes', [])
-    up_times = request.cookies.get('up_times', [])
-    return render_template('uploads.html', mode=mode, up_files=up_files, up_sizes=up_sizes, up_times=up_times, confirm=confirm, zip=zip)
+    up_files = eval(request.cookies.get('up_files', '[]')) # Gets the list of uploaded files from a cookie, else defaults up_files to an empty array
+    up_sizes = eval(request.cookies.get('up_sizes', '[]'))
+    up_times = eval(request.cookies.get('up_times', '[]'))
+    return render_template('uploads.html', mode=mode, up_files=up_files, up_sizes=up_sizes, up_times=up_times, confirm=confirm, zip=zip,
+    theme = request.cookies.get('theme', 'light'))
     # The html file that lists uploaded files
 
 
@@ -30,20 +31,17 @@ def upload():
     else:
         up_files = request.files.getlist('selected') # Variable that stores filenames in user uploads history
         response = make_response(redirect('/uploads')) # Allows to edit the response object and create cookies
-        response.set_cookie('up_files', request.cookies.get('up_files', []))
-        response.set_cookie('up_sizes', request.cookies.get('up_sizes', []))
-        response.set_cookie('up_times', request.cookies.get('up_times', []))
+        up_names = loads(request.cookies.get('up_files', '[]'))
+        up_sizes = loads(request.cookies.get('up_sizes', '[]'))
+        up_times = loads(request.cookies.get('up_times', '[]'))
         up_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         for file in up_files: # Iterates through all files in the request and saves them to the server
             filepath = normpath(join(STORAGE, file.filename))
             # Constructs the full path to the file in the storage directory, normalizing it to avoid directory traversal issues
             makedirs(dirname(filepath), exist_ok=True)  # Ensures that the directory exists before saving the file
             file.save(filepath) # Saves the file to the storage directory
-            up_names = loads(request.cookie.get('up_files', '[]'))
             # Loads the list of uploaded files from the cookie, or initializes it as an empty list if the cookie does not exist
             up_names.append(file.filename) # Appends the filename to the list of uploaded files in the cookie
-            up_names = dumps(up_names) # Converts the list of uploaded files to a JSON string for storage in the cookie
-            response.set_cookie('up_files', up_names) # Sets the cookie with the updated list of uploaded files
             size = getsize(filepath) # Gets the size of the uploaded file in bytes
             if size >= 1073741824: # Conditions to format the file size for display
                 size = f'{"{:.2f}".format(size / 1073741824)} GB'
@@ -53,10 +51,13 @@ def upload():
                 size = f'{"{:.2f}".format(size / 1024)} KB'
             else:
                 size = f'{size} B'
-            session['up_sizes'].append(size) # Saves the file size in the cookie
-            session['up_times'].append(up_time)
-            # up_time has to be saved for every file, because of the way the uploads page is rendered,
-            # so the cookie variable is saved as a list of the same length as the number of uploaded files
+            up_sizes.append(size) # Saves the file size in the cookie
+            up_times.append(up_time)
+        response.set_cookie('up_files', dumps(up_names)) # Sets the cookie with the updated list of uploaded files
+        response.set_cookie('up_sizes', dumps(up_sizes)) # Sets the cookie with the updated list of file sizes
+        response.set_cookie('up_times', dumps(up_times)) # Sets the cookie with the updated list of upload times
+        # up_time has to be saved for every file, because of the way the uploads page is rendered,
+        # so the cookie variable is saved as a list of the same length as the number of uploaded files
         flash(f'Files uploaded successfully at {up_time}.', 'success')
         return response # Redirects to the uploads page after saving files
 
@@ -67,9 +68,11 @@ def clear_uploads():
     """
     Clears the history of uploaded files from the cookies.
     """
-    session['up_files'] = [] # Clears the list of uploaded files in the cookie
-    session['up_times'] = []
-    session['up_sizes'] = []
+     # Clears the list of uploaded files in the cookie
+    response = make_response(redirect('/uploads'))
+    response.set_cookie('up_files', '[]')
+    response.set_cookie('up_sizes', '[]')
+    response.set_cookie('up_times', '[]')
     flash('The uploads history is clear.', 'success') # Flash message to indicate that the uploads history has been cleared
-    return redirect('/uploads') # Redirects to the uploads page after clearing the list
+    return response # Redirects to the uploads page after clearing the list
 
