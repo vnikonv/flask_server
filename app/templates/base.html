@@ -14,6 +14,12 @@
     {% endblock head %}
 </head>
 <body>
+<div>
+    <a href="/">Home</a>
+    <a href="/uploads">Uploads</a>
+    <a href="/downloads">Downloads</a>
+    <a href="/theme">Change Theme</a>
+</div>
 {% block body %}
 {% endblock body %}
 {% with messages = get_flashed_messages() %}
@@ -25,11 +31,5 @@
         </ul>
     {% endif %}
 {% endwith %}
-<div>
-    <a href="/">Home</a>
-    <a href="/uploads">Uploads</a>
-    <a href="/downloads">Downloads</a>
-    <a href="/theme">Change Theme</a>
-</div>
 </body>
 </html>

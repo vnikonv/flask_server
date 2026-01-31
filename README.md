@@ -1,6 +1,9 @@
 ![](app/static/favicon.ico)
 ## A home-use Flask app for file transfer between multiple devices.
 ### Install the [dependencies](requirements.txt) and execute the [entry point](run.py).
+```bash
+python run.py
+```
 ### Features:
 * Flask application to upload and download files by client devices of a local access network.
 * No JavaScript is used, no cache is saved on client devices; only cookies.

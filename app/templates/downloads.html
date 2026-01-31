@@ -4,6 +4,7 @@
 {% endblock head %}
 {% block body %}
 <h1>Downloads</h1>
+<p>
 <form method="POST" action="/downloads/upload" enctype="multipart/form-data">
     <!-- This enctype is for sending multiple binary files with different content type headers -->
     {% if mode == '0' %}
@@ -31,6 +32,15 @@
     <button type="submit">Switch To File Mode</button>
     {% endif %}
 </form>
+</p>
+<p>
+<!-- Field and button for creating new folders. -->
+<form method="POST" action="/downloads/create_folder">
+    <label for="folder_name">Folder Name:</label>
+    <input type="text" name="folder_name" required>
+    <button type="submit">Create Folder</button>
+</form>
+</p>
 {% if subpath %}
     <!-- The split method returns a list containing directory names in current path except for the current directory. -->
     <!-- The directories in that list are then joined with '/' as the separator. -->

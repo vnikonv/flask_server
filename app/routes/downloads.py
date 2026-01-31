@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, send_file, session, flash, redirect, make_response
-from os import listdir, remove, rmdir, makedirs
+from os import listdir, makedirs
 from os.path import join, exists, isdir, relpath, normpath, dirname, getsize
 # normpath for OS-independent path normalization
 from app import STORAGE
 from app.modules.fman import rmrf, arch
 # Importing the rmrf function to handle recursive file deletion
 from datetime import datetime
+from json import loads, dumps
 
 downloads_bp = Blueprint('downloads', __name__)
 
@@ -29,6 +30,27 @@ def list_files(subpath):
     mode = request.args.get('mode', '0')
     return render_template('downloads.html', items=items, subpath=subpath, confirm=confirm,
     STORAGE=STORAGE, join=join, isdir=isdir, mode=mode, theme = request.cookies.get('theme', 'light'))
+
+@downloads_bp.route('/downloads/create_folder', methods=['POST'])
+def create_folder():
+    mark = f'/downloads/tree/{session.get("subpath", "")}'
+    folder_name = request.form.get('folder_name')
+    if not folder_name:
+        flash('Folder name cannot be empty.', 'danger')
+        return redirect(mark)
+    
+    new_folder_path = join(session.get('current_path', STORAGE), normpath(folder_name))
+    
+    if exists(new_folder_path):
+        flash('Folder already exists.', 'danger')
+    else:
+        try:
+            makedirs(new_folder_path)
+            flash(f'Folder "{folder_name}" created successfully.', 'success')
+        except Exception as e:
+            flash(f'Error creating folder: {str(e)}', 'danger')
+    
+    return redirect(mark)
 
 
 @downloads_bp.route('/downloads/download/<path:filepath>', methods=['GET'])
@@ -64,23 +86,25 @@ def upload_file():
     """
     Uploads files, folders and archives to the current directory.
     """
+    mark = '/downloads/tree/' + session.get('subpath', '')
     if ('selected' not in request.files) or (request.files['selected'].filename == ''):
         flash('No files selected.', 'error')
-        return redirect('/downloads/tree/')
+        return redirect(mark)
     else:
         up_files = request.files.getlist('selected') # Variable that stores filenames in user uploads history
-        session['up_files'] = session.get('up_files', [])
-        session['up_sizes'] = session.get('up_sizes', [])
-        session['up_times'] = session.get('up_times', [])
+        up_names = loads(request.cookies.get('up_files', '[]'))
+        up_sizes = loads(request.cookies.get('up_sizes', '[]'))
+        up_times = loads(request.cookies.get('up_times', '[]'))
         # up_time has to be saved for every file, because of the way the uploads page is rendered,
         # so the session variable is saved as a list of the same length as the number of uploaded files
         up_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        response = make_response(redirect(mark)) # Allows to edit the response object and create cookies
         for file in up_files: # Iterates through all files in the request and saves them to the server
             filepath = normpath(join(session.get('current_path', STORAGE), file.filename))
             # Constructs the full path to the file in the storage directory, normalizing it to avoid directory traversal issues
             makedirs(dirname(filepath), exist_ok=True)  # Ensures that the directory exists before saving the file
             file.save(filepath) # Saves the file to the storage directory
-            session['up_files'].append(file.filename) # Saves the filename in the session
+            up_names.append(file.filename) # Appends the filename to the list of uploaded files in the cookie
             size = getsize(filepath) # Gets the size of the uploaded file in bytes
             if size >= 1073741824: # Conditions to format the file size for display
                 size = f'{"{:.2f}".format(size / 1073741824)} GB'
@@ -90,9 +114,11 @@ def upload_file():
                 size = f'{"{:.2f}".format(size / 1024)} KB'
             else:
                 size = f'{size} B'
-            session['up_sizes'].append(size) # Saves the file size in the session
-            session['up_times'].append(up_time)
+            up_sizes.append(size) # Saves the file size in the cookie
+            up_times.append(up_time)
+        response.set_cookie('up_files', dumps(up_names)) # Sets the cookie with the updated list of uploaded files
+        response.set_cookie('up_sizes', dumps(up_sizes)) # Sets the cookie with the updated list of file sizes
+        response.set_cookie('up_times', dumps(up_times)) # Sets the cookie with the updated list of upload times
         flash(f'Files uploaded successfully at {up_time}.', 'success')
-        mark = '/downloads/tree/' + session.get('subpath', '')
-        return redirect(mark)
+        return response
         # Redirects to the directory that the file was uploaded from after saving files

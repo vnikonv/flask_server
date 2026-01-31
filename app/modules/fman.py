@@ -19,8 +19,14 @@ def env_write(path : str, field : str, value : str) -> None:
     """
     # This function writes a value to a specified field in a file (.env).
     """
-    with open(path, 'a') as f:
-        f.write(f'{field}={value}\n')
+    with open(path, 'a+') as f:
+        # If the last character is not a newline, add a newline before writing
+        if f.tell() > 0:  # Check if the file is not empty
+            f.seek(f.tell() - 1) # Move the cursor back one character
+            last_char = f.read()
+            if last_char != '\n':
+                f.write('\n')
+        f.write(f'{field}={value}')
 
 
 def rmrf(path : str) -> None:
