@@ -1,7 +1,22 @@
 {%extends "base.html"%}
 {% block head %}
-<title>Home</title>
+<title>CicleDrop</title>
 {% endblock head %}
 {% block body %}
-<h1>Home</h1>
+<div class="home-container">
+    <div class="greeting">
+        <h1>Home</h1>
+        <p>You are using CicleDrop, a file transfer server application for use within the same LAN.</p>
+        <p>The app should be accessible by any device with a browser. It provides a file tree structure
+        with a limited functionality to upload, download, and delete files and folders. One computer
+        in your network needs to run the server, and other devices can connect to it using its local
+        IP address followed by the port number (default is 8080). Cookies are currently used for sessions
+        and upload history tracking.</p>
+        <p>Hope it helps with whatever goal you have in mind &lt3 </p>
+        <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+    </div>
+    <div>
+        <img class="unicorn" src="{{ url_for('static', filename='unicorn.png') }}" alt="Unicorn">
+    </div>
+</div>
 {% endblock body %}

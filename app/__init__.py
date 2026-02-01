@@ -21,13 +21,13 @@ def create_app(secret):
 
     @app.route('/', methods=['GET']) # When the root route is accessed, it will call the index function
     def index():
-        return render_template('index.html', theme = request.cookies.get('theme', 'light')) # The homepage is served
+        return render_template('index.html', theme = request.cookies.get('theme', 'dark')) # The homepage is served
 
     @app.route('/theme') # Route for changing the theme cookie
     def theme():
         response = make_response(redirect(request.referrer)) # Creates a response object to modify cookies
-        theme = request.cookies.get('theme', 'light') # Gets the theme from the theme cookie, defaults to 'light'
-        response.set_cookie('theme', 'dark' if theme == 'light' else 'light') # Toggles the theme cookie between 'light' and 'dark'
+        theme = request.cookies.get('theme', 'dark') # Gets the theme from the theme cookie, defaults to 'dark'
+        response.set_cookie('theme', 'light' if theme == 'dark' else 'dark') # Toggles the theme cookie between 'light' and 'dark'
         return response
 
     @app.after_request # Implements strict no-cache policy

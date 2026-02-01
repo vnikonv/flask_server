@@ -1,4 +1,4 @@
 """
-# Creates a class to simplify operations on cookies, such as loading and dumping data,
-# signing cookies and verifying signatures.
+# Create a class to simplify operations on upload history data, such as loading and dumping,
+# replacing cookies.
 """

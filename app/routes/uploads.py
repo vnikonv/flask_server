@@ -17,7 +17,7 @@ def uploads():
     up_sizes = eval(request.cookies.get('up_sizes', '[]'))
     up_times = eval(request.cookies.get('up_times', '[]'))
     return render_template('uploads.html', mode=mode, up_files=up_files, up_sizes=up_sizes, up_times=up_times, confirm=confirm, zip=zip,
-    theme = request.cookies.get('theme', 'light'))
+    theme = request.cookies.get('theme', 'dark'))
     # The html file that lists uploaded files
 
 

@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, render_template, request, send_file, session, flash, redirect, make_response
 from os import listdir, makedirs
 from os.path import join, exists, isdir, relpath, normpath, dirname, getsize
@@ -29,7 +30,7 @@ def list_files(subpath):
     confirm = request.args.get('confirm', '0') # Get confirmation for deletion
     mode = request.args.get('mode', '0')
     return render_template('downloads.html', items=items, subpath=subpath, confirm=confirm,
-    STORAGE=STORAGE, join=join, isdir=isdir, mode=mode, theme = request.cookies.get('theme', 'light'))
+    STORAGE=STORAGE, join=join, isdir=isdir, mode=mode, theme = request.cookies.get('theme', 'dark'))
 
 @downloads_bp.route('/downloads/create_folder', methods=['POST'])
 def create_folder():
@@ -59,13 +60,19 @@ def send(filepath):
     Sends a file or zips and sends a directory.
     """
     fpath = join(STORAGE, normpath(filepath))
-    apath = join(STORAGE, 'archive')
     if not exists(fpath):
         flash('File not found.', 'danger')
         return redirect('/downloads')
 
     if isdir(fpath):  # If the path is a directory, zip it before sending
-        return send_file(arch(apath, 'zip').compress(fpath), as_attachment=True)
+        apath = join(STORAGE, 'archives', normpath(filepath))
+        afile = apath + '.zip'
+        if not exists(dirname(apath)):
+            makedirs(dirname(apath))
+        else:
+            if exists(afile):
+                rmrf(afile)  # Remove existing archive to avoid stale files
+            return send_file(arch(apath, 'zip').compress(fpath), as_attachment=True)
     else:
         return send_file(fpath, as_attachment=True)
 

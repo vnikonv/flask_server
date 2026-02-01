@@ -7,17 +7,23 @@
 <form method="POST" action="/uploads/upload" enctype="multipart/form-data">
     <!-- This enctype is for sending multiple binary files with different content type headers -->
     {% if mode == '0' %}
-    <label for="selected">Select files:</label>
-    <input type="file" name="selected" multiple="multiple">
+    <label for="selected">Select files:
+        <input name="selected" type="file" multiple="multiple">
+    </label>
     {% elif mode == '1' %}
-    <label for="selected">Select a folder:</label>
-    <input type="file" name="selected" webkitdirectory>
+    <label for="selected">Select a folder:
+        <input name="selected" type="file" webkitdirectory>
+    </label>
     {% else %}
-    <label for="selected">Select an archive:</label>
-    <input type="file" name="selected" multiple="multiple" accept=".zip, .7z, .tar, .gz, .rar">
+    <label for="selected">Select an archive:
+        <input name="selected" type="file" multiple="multiple" accept=".zip, .7z, .tar, .gz, .rar">
+    </label>
     {% endif %}
-    <label for="selected">Upload the files:</label>
-    <input type="submit">
+    <div>
+        <label for="selected">Upload the files:
+            <input type="submit">
+        </label>
+    </div>
 </form>
 <form method="GET">
     {% if mode == '1' %}
